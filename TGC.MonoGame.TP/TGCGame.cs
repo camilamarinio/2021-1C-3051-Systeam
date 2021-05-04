@@ -79,7 +79,7 @@ namespace TGC.MonoGame.TP
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Cargo el modelo del logo.
-            Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/tgc-logo");
+            Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
 
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
@@ -132,7 +132,7 @@ namespace TGC.MonoGame.TP
 
             foreach (var mesh in Model.Meshes)
             {
-                World = mesh.ParentBone.Transform * rotationMatrix;
+                World = Matrix.CreateScale(8f) * rotationMatrix;
                 Effect.Parameters["World"].SetValue(World);
                 mesh.Draw();
             }
