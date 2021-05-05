@@ -54,9 +54,7 @@ namespace TGC.MonoGame.TP
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
             camTarget = new Vector3(0f, 0f, 0f);
             camPosition = new Vector3(0f, 0f, -5);
-            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), Graphics.GraphicsDevice.Viewport.AspectRatio, 1f, 1000f);
-            View = Matrix.CreateLookAt(camPosition, camTarget,new Vector3(0f, 1f, 0f));// Y up
-            World = Matrix.CreateWorld(camTarget, Vector3.Forward, Vector3.Up);
+            
             // Apago el backface culling.
             // Esto se hace por un problema en el diseno del modelo del logo de la materia.
             // Una vez que empiecen su juego, esto no es mas necesario y lo pueden sacar.
@@ -67,9 +65,9 @@ namespace TGC.MonoGame.TP
 
             // Configuramos nuestras matrices de la escena.
             //Original
-            //World = Matrix.Identity;
-            //View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up);
-            //Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 250);
+            World = Matrix.Identity;
+            View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 250);
 
             base.Initialize();
         }
