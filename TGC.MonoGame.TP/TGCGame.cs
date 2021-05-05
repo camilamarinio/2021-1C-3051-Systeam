@@ -144,13 +144,15 @@ namespace TGC.MonoGame.TP
                 camPosition.Z -= 0.1f;
                 camTarget.Z -= 0.1f;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                camPosition.Z += 0.1f;
+                camPosition.Y += 0.1f;
+                camTarget.Y += 0.1f;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                camPosition.Z -= 0.1f;
+                camPosition.Y -= 0.1f;
+                camTarget.Y -= 0.1f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
