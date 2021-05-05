@@ -136,13 +136,13 @@ namespace TGC.MonoGame.TP
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
             {
-                camPosition.Y += 0.1f;
-                camTarget.Y += 0.1f;
+                camPosition.Z += 0.1f;
+                camTarget.Z += 0.1f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
             {
-                camPosition.Y -= 0.1f;
-                camTarget.Y -= 0.1f;
+                camPosition.Z -= 0.1f;
+                camTarget.Z -= 0.1f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
             {
