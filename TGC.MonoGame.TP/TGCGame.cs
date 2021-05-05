@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TGC.MonoGame.TP.Cam;
 
 namespace TGC.MonoGame.TP
 {
@@ -42,18 +43,19 @@ namespace TGC.MonoGame.TP
         private Matrix World { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
-        private Vector3 camTarget;
-        private Vector3 camPosition;
-        bool orbit = false;
+        
+        private CamComun camara { get; set; }
+        
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
         ///     Escribir aqui el codigo de inicializacion: el procesamiento que podemos pre calcular para nuestro juego.
         /// </summary>
         protected override void Initialize()
         {
+            camara = new CamComun(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, -5));
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
-            camTarget = new Vector3(0f, 0f, 0f);
-            camPosition = new Vector3(0f, 0f, -5);
+            //camTarget = new Vector3(0f, 0f, 0f);
+            //camPosition = new Vector3(0f, 0f, -5);
             
             // Apago el backface culling.
             // Esto se hace por un problema en el diseno del modelo del logo de la materia.
@@ -118,52 +120,9 @@ namespace TGC.MonoGame.TP
             // Aca deberiamos poner toda la logica de actualizacion del juego.
 
             //cam
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back ==
-                ButtonState.Pressed || Keyboard.GetState().IsKeyDown(
-                Keys.Escape))
-                Exit();
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                camPosition.X += 0.1f;
-                camTarget.X += 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                camPosition.X -= 0.1f;
-                camTarget.X -= 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                camPosition.Z += 0.1f;
-                camTarget.Z += 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                camPosition.Z -= 0.1f;
-                camTarget.Z -= 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                camPosition.Y += 0.1f;
-                camTarget.Y += 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                camPosition.Y -= 0.1f;
-                camTarget.Y -= 0.1f;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            {
-                orbit = !orbit;
-            }
-            if (orbit)
-            {
-                Matrix rotationMatrix = Matrix.CreateRotationY(
-                                        MathHelper.ToRadians(1f));
-                camPosition = Vector3.Transform(camPosition,
-                              rotationMatrix);
-            }
-            View = Matrix.CreateLookAt(camPosition, camTarget,
+            camara.upDate(gameTime);
+
+            View = Matrix.CreateLookAt(camara.getcamPosition(), camara.getcamTarget(),
                          Vector3.Up);
 
             // Capturar Input teclado
