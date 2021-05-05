@@ -42,7 +42,9 @@ namespace TGC.MonoGame.TP
         private Matrix World { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
-
+        private Vector3 camTarget;
+        private Vector3 camPosition;
+        bool orbit = false;
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
         ///     Escribir aqui el codigo de inicializacion: el procesamiento que podemos pre calcular para nuestro juego.
@@ -50,7 +52,11 @@ namespace TGC.MonoGame.TP
         protected override void Initialize()
         {
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
-
+            camTarget = new Vector3(0f, 0f, 0f);
+            camPosition = new Vector3(0f, 0f, -5);
+            Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45f), Graphics.GraphicsDevice.Viewport.AspectRatio, 1f, 1000f);
+            View = Matrix.CreateLookAt(camPosition, camTarget,new Vector3(0f, 1f, 0f));// Y up
+            World = Matrix.CreateWorld(camTarget, Vector3.Forward, Vector3.Up);
             // Apago el backface culling.
             // Esto se hace por un problema en el diseno del modelo del logo de la materia.
             // Una vez que empiecen su juego, esto no es mas necesario y lo pueden sacar.
@@ -60,10 +66,10 @@ namespace TGC.MonoGame.TP
             // Seria hasta aca.
 
             // Configuramos nuestras matrices de la escena.
-            World = Matrix.Identity;
-            View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up);
-            Projection =
-                Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 250);
+            //Original
+            //World = Matrix.Identity;
+            //View = Matrix.CreateLookAt(Vector3.UnitZ * 150, Vector3.Zero, Vector3.Up);
+            //Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 1, 250);
 
             base.Initialize();
         }
@@ -75,22 +81,31 @@ namespace TGC.MonoGame.TP
         /// </summary>
         protected override void LoadContent()
         {
+           
+
+
+
             // Aca es donde deberiamos cargar todos los contenido necesarios antes de iniciar el juego.
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Cargo el modelo del logo.
             Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
-
+            
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
 
             // Asigno el efecto que cargue a cada parte del mesh.
             // Un modelo puede tener mas de 1 mesh internamente.
+            
             foreach (var mesh in Model.Meshes)
-                // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
+
+
+            // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
             foreach (var meshPart in mesh.MeshParts)
                 meshPart.Effect = Effect;
+
+            
 
             base.LoadContent();
         }
@@ -103,6 +118,53 @@ namespace TGC.MonoGame.TP
         protected override void Update(GameTime gameTime)
         {
             // Aca deberiamos poner toda la logica de actualizacion del juego.
+
+            //cam
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back ==
+                ButtonState.Pressed || Keyboard.GetState().IsKeyDown(
+                Keys.Escape))
+                Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                camPosition.X += 0.1f;
+                camTarget.X += 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                camPosition.X -= 0.1f;
+                camTarget.X -= 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+            {
+                camPosition.Y += 0.1f;
+                camTarget.Y += 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down))
+            {
+                camPosition.Y -= 0.1f;
+                camTarget.Y -= 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+            {
+                camPosition.Z += 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+            {
+                camPosition.Z -= 0.1f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                orbit = !orbit;
+            }
+            if (orbit)
+            {
+                Matrix rotationMatrix = Matrix.CreateRotationY(
+                                        MathHelper.ToRadians(1f));
+                camPosition = Vector3.Transform(camPosition,
+                              rotationMatrix);
+            }
+            View = Matrix.CreateLookAt(camPosition, camTarget,
+                         Vector3.Up);
 
             // Capturar Input teclado
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -122,21 +184,22 @@ namespace TGC.MonoGame.TP
         protected override void Draw(GameTime gameTime)
         {
             // Aca deberiamos poner toda la logia de renderizado del juego.
-            GraphicsDevice.Clear(Color.Black);
-
+            //GraphicsDevice.Clear(Color.White);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
             // Para dibujar le modelo necesitamos pasarle informacion que el efecto esta esperando.
             Effect.Parameters["View"].SetValue(View);
             Effect.Parameters["Projection"].SetValue(Projection);
             Effect.Parameters["DiffuseColor"].SetValue(Color.DarkBlue.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
-
+            
             foreach (var mesh in Model.Meshes)
             {
-                World = Matrix.CreateScale(8f) * rotationMatrix;
+                World = Matrix.CreateScale(0.1f) * rotationMatrix;
                 Effect.Parameters["World"].SetValue(World);
                 mesh.Draw();
             }
-        }
+            
+        }  
 
         /// <summary>
         ///     Libero los recursos que se cargaron en el juego.
