@@ -60,14 +60,19 @@ namespace TGC.MonoGame.TP.Cam
                 camPosition.Y -= 0.1f;
                 camTarget.Y -= 0.1f;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                orbit = !orbit;
-            }
-            if (orbit)
-            {
+               
                 Matrix rotationMatrix = Matrix.CreateRotationY(
                                         MathHelper.ToRadians(1f));
+                camPosition = Vector3.Transform(camPosition,
+                              rotationMatrix);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+
+                Matrix rotationMatrix = Matrix.CreateRotationY(
+                                        MathHelper.ToRadians(-1f));
                 camPosition = Vector3.Transform(camPosition,
                               rotationMatrix);
             }

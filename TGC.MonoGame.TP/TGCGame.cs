@@ -38,14 +38,15 @@ namespace TGC.MonoGame.TP
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
         private Model Model { get; set; }
+        private Model Model2 { get; set; }
         private Effect Effect { get; set; }
         private float Rotation { get; set; }
         private Matrix World { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
-        
+
         private CamComun camara { get; set; }
-        
+
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
         ///     Escribir aqui el codigo de inicializacion: el procesamiento que podemos pre calcular para nuestro juego.
@@ -56,7 +57,7 @@ namespace TGC.MonoGame.TP
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
             //camTarget = new Vector3(0f, 0f, 0f);
             //camPosition = new Vector3(0f, 0f, -5);
-            
+
             // Apago el backface culling.
             // Esto se hace por un problema en el diseno del modelo del logo de la materia.
             // Una vez que empiecen su juego, esto no es mas necesario y lo pueden sacar.
@@ -81,7 +82,7 @@ namespace TGC.MonoGame.TP
         /// </summary>
         protected override void LoadContent()
         {
-           
+
 
 
 
@@ -90,22 +91,29 @@ namespace TGC.MonoGame.TP
 
             // Cargo el modelo del logo.
             Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
-            
+            Model2 = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
 
             // Asigno el efecto que cargue a cada parte del mesh.
             // Un modelo puede tener mas de 1 mesh internamente.
-            
-            foreach (var mesh in Model.Meshes)
 
-
+            foreach (var mesh in Model.Meshes) { 
             // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
-            foreach (var meshPart in mesh.MeshParts)
+                foreach (var meshPart in mesh.MeshParts) { 
                 meshPart.Effect = Effect;
+                } 
+            }
 
-            
+            foreach (var mesh in Model2.Meshes)
+            {
+                // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
+                foreach (var meshPart in mesh.MeshParts)
+                {
+                    meshPart.Effect = Effect;
+                }
+            }
 
             base.LoadContent();
         }
@@ -157,7 +165,14 @@ namespace TGC.MonoGame.TP
                 Effect.Parameters["World"].SetValue(World);
                 mesh.Draw();
             }
-            
+
+            foreach (var mesh in Model2.Meshes)
+            {
+                World = Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 0.7F);
+                Effect.Parameters["World"].SetValue(World);
+                mesh.Draw();
+            }
+
         }  
 
         /// <summary>
