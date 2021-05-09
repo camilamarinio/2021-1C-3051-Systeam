@@ -39,11 +39,15 @@ namespace TGC.MonoGame.TP
         private SpriteBatch SpriteBatch { get; set; }
         private Model Model { get; set; }
         private Model Model2 { get; set; }
+        private Model ball { get; set; }
+        private Model cube { get; set; }
         private Effect Effect { get; set; }
         private float Rotation { get; set; }
         private Matrix World { get; set; }
         private Matrix View { get; set; }
         private Matrix Projection { get; set; }
+
+        private Texture2D SingTexture { get; set; }
 
         private CamComun camara { get; set; }
 
@@ -55,9 +59,7 @@ namespace TGC.MonoGame.TP
         {
             camara = new CamComun(new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, -5));
             // La logica de inicializacion que no depende del contenido se recomienda poner en este metodo.
-            //camTarget = new Vector3(0f, 0f, 0f);
-            //camPosition = new Vector3(0f, 0f, -5);
-
+            
             // Apago el backface culling.
             // Esto se hace por un problema en el diseno del modelo del logo de la materia.
             // Una vez que empiecen su juego, esto no es mas necesario y lo pueden sacar.
@@ -92,6 +94,8 @@ namespace TGC.MonoGame.TP
             // Cargo el modelo del logo.
             Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
             Model2 = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
+            ball = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/sphere");
+            cube = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/cube");
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
@@ -101,12 +105,32 @@ namespace TGC.MonoGame.TP
 
             foreach (var mesh in Model.Meshes) { 
             // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
-                foreach (var meshPart in mesh.MeshParts) { 
-                meshPart.Effect = Effect;
+                foreach (var meshPart in mesh.MeshParts) {
+                    SingTexture = ((BasicEffect)meshPart.Effect).Texture;
+                    meshPart.Effect = Effect;
                 } 
             }
 
             foreach (var mesh in Model2.Meshes)
+            {
+                // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
+                foreach (var meshPart in mesh.MeshParts)
+                {
+                    meshPart.Effect = Effect;
+                }
+            }
+
+            foreach (var mesh in ball.Meshes)
+            {
+                // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
+                foreach (var meshPart in mesh.MeshParts)
+                {
+                    SingTexture = ((BasicEffect)meshPart.Effect).Texture;
+                    meshPart.Effect = Effect;
+                }
+            }
+
+            foreach (var mesh in cube.Meshes)
             {
                 // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts)
@@ -156,16 +180,18 @@ namespace TGC.MonoGame.TP
             // Para dibujar le modelo necesitamos pasarle informacion que el efecto esta esperando.
             Effect.Parameters["View"].SetValue(View);
             Effect.Parameters["Projection"].SetValue(Projection);
-            Effect.Parameters["DiffuseColor"].SetValue(Color.DarkBlue.ToVector3());
+            //Effect.Parameters["DiffuseColor"]?.SetValue(Color.DarkBlue.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
             
             foreach (var mesh in Model.Meshes)
             {
-                World = Matrix.CreateScale(0.1f) * rotationMatrix;
+                World = Matrix.CreateScale(0.5f) * rotationMatrix;
                 Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(SingTexture);
                 mesh.Draw();
             }
 
+            
             foreach (var mesh in Model2.Meshes)
             {
                 World = Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 0.7F);
@@ -173,6 +199,21 @@ namespace TGC.MonoGame.TP
                 mesh.Draw();
             }
 
+            
+            foreach (var mesh in ball.Meshes)
+            {
+                World = Matrix.CreateScale(0.4f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
+                Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(SingTexture);
+                mesh.Draw();
+            }
+
+            foreach (var mesh in cube.Meshes)
+            {
+                World = Matrix.CreateScale(0.4f) * Matrix.CreateTranslation(Vector3.Left * 2.4F);
+                Effect.Parameters["World"].SetValue(World);
+                mesh.Draw();
+            }
         }  
 
         /// <summary>
