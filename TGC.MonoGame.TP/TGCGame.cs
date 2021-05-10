@@ -48,6 +48,9 @@ namespace TGC.MonoGame.TP
         private Matrix Projection { get; set; }
 
         private Texture2D SingTexture { get; set; }
+        private Texture2D UnSplash { get; set; }
+        private Texture2D Duy { get; set; }
+        private Texture2D Paper { get; set; }
 
         private CamComun camara { get; set; }
 
@@ -96,6 +99,10 @@ namespace TGC.MonoGame.TP
             Model2 = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
             ball = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/sphere");
             cube = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/cube");
+
+            UnSplash = Content.Load<Texture2D>(ContentFolderTextures + "unsplash");
+            Duy = Content.Load<Texture2D>(ContentFolderTextures + "duy");
+            Paper = Content.Load<Texture2D>(ContentFolderTextures + "paper");
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
@@ -125,7 +132,7 @@ namespace TGC.MonoGame.TP
                 // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts)
                 {
-                    SingTexture = ((BasicEffect)meshPart.Effect).Texture;
+                   // SingTexture = ((BasicEffect)meshPart.Effect).Texture;
                     meshPart.Effect = Effect;
                 }
             }
@@ -135,6 +142,7 @@ namespace TGC.MonoGame.TP
                 // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts)
                 {
+                   // Duy = ((BasicEffect)meshPart.Effect).Texture;
                     meshPart.Effect = Effect;
                 }
             }
@@ -162,8 +170,11 @@ namespace TGC.MonoGame.TP
                 //Salgo del juego.
                 Exit();
 
+            float totalTime= Convert.ToSingle(gameTime.TotalGameTime.TotalSeconds);
             // Basado en el tiempo que paso se va generando una rotacion.
-            Rotation += Convert.ToSingle(gameTime.ElapsedGameTime.TotalSeconds);
+            Rotation = totalTime;
+
+            //Effect.Parameters["Time"].SetValue(totalTime);
 
             base.Update(gameTime);
         }
@@ -185,9 +196,10 @@ namespace TGC.MonoGame.TP
             
             foreach (var mesh in Model.Meshes)
             {
-                World = Matrix.CreateScale(0.5f) * rotationMatrix;
+                World = Matrix.CreateScale(0.3f) * rotationMatrix;
                 Effect.Parameters["World"].SetValue(World);
-                Effect.Parameters["ModelTexture"].SetValue(SingTexture);
+                //Effect.Parameters["ModelTexture"].SetValue(SingTexture);
+                Effect.Parameters["ModelTexture"].SetValue(Paper);
                 mesh.Draw();
             }
 
@@ -196,6 +208,7 @@ namespace TGC.MonoGame.TP
             {
                 World = Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 0.7F);
                 Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(Duy);
                 mesh.Draw();
             }
 
@@ -204,16 +217,17 @@ namespace TGC.MonoGame.TP
             {
                 World = Matrix.CreateScale(0.4f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
                 Effect.Parameters["World"].SetValue(World);
-                Effect.Parameters["ModelTexture"].SetValue(SingTexture);
+                Effect.Parameters["ModelTexture"].SetValue(UnSplash);
                 mesh.Draw();
             }
-
+            /*
             foreach (var mesh in cube.Meshes)
             {
                 World = Matrix.CreateScale(0.4f) * Matrix.CreateTranslation(Vector3.Left * 2.4F);
                 Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(Duy);
                 mesh.Draw();
-            }
+            }*/
         }  
 
         /// <summary>

@@ -61,7 +61,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+    //return tex2D(textureSample, input.TextureCoordinated * 0.5 + 0.5 * float2(sin(Time) * 0.5 + 0.5, 0.0));
     return tex2D(textureSample, input.TextureCoordinated);
+
 }
 
 technique BasicColorDrawing
