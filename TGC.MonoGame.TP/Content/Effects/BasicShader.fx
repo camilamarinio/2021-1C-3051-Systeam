@@ -24,13 +24,13 @@ float Time = 0;
 struct VertexShaderInput
 {
 	float4 Position : POSITION0;
-    float2 TextureCoordinated : TEXCOORD0;
+    float2 TextureCoordinate : TEXCOORD0;
 };
 
 struct VertexShaderOutput
 {
 	float4 Position : SV_POSITION;
-    float2 TextureCoordinated : TEXCOORD0;
+    float2 TextureCoordinate : TEXCOORD0;
 };
 
 texture ModelTexture;
@@ -41,6 +41,7 @@ sampler2D textureSample = sampler_state
     MinFilter = Linear;
     AdDressU = Clamp;
     AdDressV = Clamp;
+    MipFilter = Linear;
 };
 
 VertexShaderOutput MainVS(in VertexShaderInput input)
@@ -54,7 +55,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 	// View space to Projection space
     output.Position = mul(viewPosition, Projection);
 
-    output.TextureCoordinated = input.TextureCoordinated;
+    output.TextureCoordinate = input.TextureCoordinate;
     
     return output;
 }
@@ -62,7 +63,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
     //return tex2D(textureSample, input.TextureCoordinated * 0.5 + 0.5 * float2(sin(Time) * 0.5 + 0.5, 0.0));
-    return tex2D(textureSample, input.TextureCoordinated);
+    return tex2D(textureSample, input.TextureCoordinate);
 
 }
 

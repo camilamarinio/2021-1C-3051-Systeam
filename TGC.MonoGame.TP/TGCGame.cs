@@ -37,7 +37,7 @@ namespace TGC.MonoGame.TP
 
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
-        private Model Model { get; set; }
+        private Model Sing { get; set; }
         private Model Model2 { get; set; }
         private Model ball { get; set; }
         private Model cube { get; set; }
@@ -51,6 +51,7 @@ namespace TGC.MonoGame.TP
         private Texture2D UnSplash { get; set; }
         private Texture2D Duy { get; set; }
         private Texture2D Paper { get; set; }
+        private Texture2D Metal { get; set; }
 
         private CamComun camara { get; set; }
 
@@ -95,14 +96,15 @@ namespace TGC.MonoGame.TP
             SpriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Cargo el modelo del logo.
-            Model = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
+            Sing = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
             Model2 = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
             ball = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/sphere");
             cube = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/cube");
-
+            
             UnSplash = Content.Load<Texture2D>(ContentFolderTextures + "unsplash");
             Duy = Content.Load<Texture2D>(ContentFolderTextures + "duy");
             Paper = Content.Load<Texture2D>(ContentFolderTextures + "paper");
+            Metal = Content.Load<Texture2D>(ContentFolderTextures + "metal");
             // Cargo un efecto basico propio declarado en el Content pipeline.
             // En el juego no pueden usar BasicEffect de MG, deben usar siempre efectos propios.
             Effect = Content.Load<Effect>(ContentFolderEffects + "BasicShader");
@@ -110,14 +112,14 @@ namespace TGC.MonoGame.TP
             // Asigno el efecto que cargue a cada parte del mesh.
             // Un modelo puede tener mas de 1 mesh internamente.
 
-            foreach (var mesh in Model.Meshes) { 
+            foreach (var mesh in Sing.Meshes) { 
             // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts) {
                     SingTexture = ((BasicEffect)meshPart.Effect).Texture;
                     meshPart.Effect = Effect;
                 } 
             }
-
+            
             foreach (var mesh in Model2.Meshes)
             {
                 // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
@@ -146,7 +148,7 @@ namespace TGC.MonoGame.TP
                     meshPart.Effect = Effect;
                 }
             }
-
+            
             base.LoadContent();
         }
 
@@ -194,40 +196,40 @@ namespace TGC.MonoGame.TP
             //Effect.Parameters["DiffuseColor"]?.SetValue(Color.DarkBlue.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
             
-            foreach (var mesh in Model.Meshes)
+            foreach (var mesh in Sing.Meshes)
             {
-                World = Matrix.CreateScale(0.3f) * rotationMatrix;
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.003f) * rotationMatrix;
                 Effect.Parameters["World"].SetValue(World);
-                //Effect.Parameters["ModelTexture"].SetValue(SingTexture);
-                Effect.Parameters["ModelTexture"].SetValue(Paper);
+                Effect.Parameters["ModelTexture"].SetValue(SingTexture);
+                //Effect.Parameters["ModelTexture"].SetValue(Paper);
                 mesh.Draw();
             }
 
             
             foreach (var mesh in Model2.Meshes)
             {
-                World = Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 0.7F);
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 1.9F);
                 Effect.Parameters["World"].SetValue(World);
-                Effect.Parameters["ModelTexture"].SetValue(Duy);
+                Effect.Parameters["ModelTexture"].SetValue(Metal);
                 mesh.Draw();
             }
 
             
             foreach (var mesh in ball.Meshes)
             {
-                World = Matrix.CreateScale(0.4f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
+                World = mesh.ParentBone.Transform* Matrix.CreateScale(0.004f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
                 Effect.Parameters["World"].SetValue(World);
                 Effect.Parameters["ModelTexture"].SetValue(UnSplash);
                 mesh.Draw();
             }
-            /*
+            
             foreach (var mesh in cube.Meshes)
             {
-                World = Matrix.CreateScale(0.4f) * Matrix.CreateTranslation(Vector3.Left * 2.4F);
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.4f) * Matrix.CreateTranslation(Vector3.Left * 2.4F);
                 Effect.Parameters["World"].SetValue(World);
                 Effect.Parameters["ModelTexture"].SetValue(Duy);
                 mesh.Draw();
-            }*/
+            }
         }  
 
         /// <summary>
