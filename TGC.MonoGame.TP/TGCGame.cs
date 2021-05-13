@@ -38,9 +38,11 @@ namespace TGC.MonoGame.TP
         private GraphicsDeviceManager Graphics { get; }
         private SpriteBatch SpriteBatch { get; set; }
         private Model Sing { get; set; }
-        private Model Model2 { get; set; }
+        private Model Trench { get; set; }
         private Model ball { get; set; }
         private Model cube { get; set; }
+        
+
         private Effect Effect { get; set; }
         private float Rotation { get; set; }
         private Matrix World { get; set; }
@@ -97,10 +99,12 @@ namespace TGC.MonoGame.TP
 
             // Cargo el modelo del logo.
             Sing = Content.Load<Model>(ContentFolder3D + "tgc-logo/StreetSign");
-            Model2 = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
+            Trench = Content.Load<Model>(ContentFolder3D + "StarWars/Trench2/Trench");
             ball = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/sphere");
             cube = Content.Load<Model>(ContentFolder3D + "Marble/FigurasGeometricas/cube");
-            
+           
+
+
             UnSplash = Content.Load<Texture2D>(ContentFolderTextures + "unsplash");
             Duy = Content.Load<Texture2D>(ContentFolderTextures + "duy");
             Paper = Content.Load<Texture2D>(ContentFolderTextures + "paper");
@@ -120,7 +124,7 @@ namespace TGC.MonoGame.TP
                 } 
             }
             
-            foreach (var mesh in Model2.Meshes)
+            foreach (var mesh in Trench.Meshes)
             {
                 // Un mesh puede tener mas de 1 mesh part (cada 1 puede tener su propio efecto).
                 foreach (var meshPart in mesh.MeshParts)
@@ -148,7 +152,9 @@ namespace TGC.MonoGame.TP
                     meshPart.Effect = Effect;
                 }
             }
-            
+
+           
+
             base.LoadContent();
         }
 
@@ -196,6 +202,7 @@ namespace TGC.MonoGame.TP
             //Effect.Parameters["DiffuseColor"]?.SetValue(Color.DarkBlue.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
             
+
             foreach (var mesh in Sing.Meshes)
             {
                 World = mesh.ParentBone.Transform * Matrix.CreateScale(0.003f) * rotationMatrix;
@@ -206,15 +213,23 @@ namespace TGC.MonoGame.TP
             }
 
             
-            foreach (var mesh in Model2.Meshes)
+            foreach (var mesh in Trench.Meshes)
             {
-                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.003f) * Matrix.CreateTranslation(Vector3.Right * 1.9F);
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.005f) * Matrix.CreateTranslation(Vector3.Up * -1.9F);
                 Effect.Parameters["World"].SetValue(World);
                 Effect.Parameters["ModelTexture"].SetValue(Metal);
                 mesh.Draw();
             }
-
-            
+            for (var i=0; i<=5;i++)
+            {
+                foreach (var mesh in Trench.Meshes)
+                {
+                    World = mesh.ParentBone.Transform * Matrix.CreateScale(0.005f) * Matrix.CreateTranslation(Vector3.Up * -1.9F) * Matrix.CreateTranslation(Vector3.Backward * (5.9F + i*6));
+                    Effect.Parameters["World"].SetValue(World);
+                    Effect.Parameters["ModelTexture"].SetValue(Metal);
+                    mesh.Draw();
+                }
+            }
             foreach (var mesh in ball.Meshes)
             {
                 World = mesh.ParentBone.Transform* Matrix.CreateScale(0.004f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
@@ -230,6 +245,8 @@ namespace TGC.MonoGame.TP
                 Effect.Parameters["ModelTexture"].SetValue(Duy);
                 mesh.Draw();
             }
+
+          
         }  
 
         /// <summary>
