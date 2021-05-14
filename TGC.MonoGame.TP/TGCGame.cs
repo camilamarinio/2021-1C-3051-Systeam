@@ -195,13 +195,13 @@ namespace TGC.MonoGame.TP
         {
             // Aca deberiamos poner toda la logia de renderizado del juego.
             //GraphicsDevice.Clear(Color.White);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
             // Para dibujar le modelo necesitamos pasarle informacion que el efecto esta esperando.
             Effect.Parameters["View"].SetValue(View);
             Effect.Parameters["Projection"].SetValue(Projection);
             //Effect.Parameters["DiffuseColor"]?.SetValue(Color.DarkBlue.ToVector3());
             var rotationMatrix = Matrix.CreateRotationY(Rotation);
-            
+            var rotationMatrixZ = Matrix.CreateRotationZ(Rotation);
 
             foreach (var mesh in Sing.Meshes)
             {
@@ -220,7 +220,7 @@ namespace TGC.MonoGame.TP
                 Effect.Parameters["ModelTexture"].SetValue(Metal);
                 mesh.Draw();
             }
-            for (var i=0; i<=5;i++)
+            for (var i=0; i<=8;i++)
             {
                 foreach (var mesh in Trench.Meshes)
                 {
@@ -232,21 +232,36 @@ namespace TGC.MonoGame.TP
             }
             foreach (var mesh in ball.Meshes)
             {
-                World = mesh.ParentBone.Transform* Matrix.CreateScale(0.004f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.2F) ;
+                World = mesh.ParentBone.Transform* Matrix.CreateScale(0.004f) * rotationMatrix * Matrix.CreateTranslation(Vector3.Left * 1.1F) * Matrix.CreateTranslation(Vector3.Down * 1.2F);
                 Effect.Parameters["World"].SetValue(World);
                 Effect.Parameters["ModelTexture"].SetValue(UnSplash);
                 mesh.Draw();
             }
-            
+
+            foreach (var mesh in ball.Meshes)
+            {
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.004f) * rotationMatrixZ * Matrix.CreateTranslation(Vector3.Left * 1.9F) * Matrix.CreateTranslation(Vector3.Down * 1.2F);
+                Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(Paper);
+                mesh.Draw();
+            }
+            foreach (var mesh in ball.Meshes)
+            {
+                World = mesh.ParentBone.Transform * Matrix.CreateScale(0.004f) * rotationMatrixZ * Matrix.CreateTranslation(Vector3.Left * 0.2F) * Matrix.CreateTranslation(Vector3.Down * 1.2F);
+                Effect.Parameters["World"].SetValue(World);
+                Effect.Parameters["ModelTexture"].SetValue(Duy);
+                mesh.Draw();
+            }
+            /*
             foreach (var mesh in cube.Meshes)
             {
                 World = mesh.ParentBone.Transform * Matrix.CreateScale(0.4f) * Matrix.CreateTranslation(Vector3.Left * 2.4F);
                 Effect.Parameters["World"].SetValue(World);
                 Effect.Parameters["ModelTexture"].SetValue(Duy);
                 mesh.Draw();
-            }
+            }*/
 
-          
+
         }  
 
         /// <summary>
